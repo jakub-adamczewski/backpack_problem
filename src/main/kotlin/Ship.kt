@@ -4,7 +4,7 @@ class Ship(
     private val capacity: Int, createRandomItems: Boolean = false, private var allContainersNumber: Int = 0
 ) {
 
-    private val containersList = mutableListOf<Container>()
+    private val allContainersList = mutableListOf<Container>()
     private var newestContainerId = 0
 
     init {
@@ -12,11 +12,11 @@ class Ship(
     }
 
     private fun containersListSortedByProfit() =
-        containersList.sortedBy { container -> container.profitFactor }.reversed()
+        allContainersList.sortedBy { container -> container.profitFactor }.reversed()
 
     private fun createRandomContainers() {
         for (i in 0 until allContainersNumber) {
-            containersList.add(
+            allContainersList.add(
                 Container(
                     newestContainerId++,
                     Random.nextInt(1, capacity * 5),
@@ -27,19 +27,19 @@ class Ship(
     }
 
     fun addContainer(value: Int, weight: Int) {
-        containersList.add(
+        allContainersList.add(
             Container(newestContainerId++, value, weight)
         )
     }
 
     fun getContainer(id: Int): Container? {
-        return containersList.find { it.id == id }
+        return allContainersList.find { it.id == id }
     }
 
     fun printContainersList(profitSorted: Boolean = false) {
         println("All containers list: ")
 
-        val listToPrint = if (profitSorted) containersListSortedByProfit() else containersList
+        val listToPrint = if (profitSorted) containersListSortedByProfit() else allContainersList
         for (container in listToPrint) {
             println(container.toString())
         }
@@ -61,13 +61,13 @@ class Ship(
 
     fun getPackedContainersWithOptimalAlgorithm(printTable: Boolean = false): List<Container> {
         val table = mutableListOf<MutableList<Int>>()
-        val containersCount = containersList.size
+        val containersCount = allContainersList.size
         for (i in 0 until containersCount) {
             table.add(mutableListOf())
         }
 
         for (i in 0 until containersCount) {
-            val currentContainer = containersList[i]
+            val currentContainer = allContainersList[i]
             for (j in 0..capacity) {
                 table[i].add(
                     if (currentContainer.weight > j) {
@@ -99,13 +99,13 @@ class Ship(
         while (currentJ > 0) {
             when {
                 currentI == 0 -> {
-                    if(table[currentI][currentJ] > 0) packedContainers.add(containersList[currentI])
+                    if(table[currentI][currentJ] > 0) packedContainers.add(allContainersList[currentI])
                     currentJ = 0
                 }
                 table[currentI][currentJ] == table[currentI][currentJ - 1] -> currentJ -= 1
                 table[currentI][currentJ] == table[currentI - 1][currentJ] -> currentI -= 1
                 else -> {
-                    val currentContainer = containersList[currentI]
+                    val currentContainer = allContainersList[currentI]
                     packedContainers.add(currentContainer)
                     currentI -= 1
                     currentJ -= currentContainer.weight
